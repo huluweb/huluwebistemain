@@ -3,8 +3,9 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import axiosInstance from '@/helper/axiosInstance'; // Import custom Axios instance
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AxiosError } from 'axios'; // Import AxiosError for proper error typing
 
 // TypeScript interface for form data
 interface RegisterFormData {
@@ -18,6 +19,11 @@ interface FormErrors {
   email?: string;
   password?: string;
   confirmPassword?: string;
+}
+
+// Interface for Axios error response
+interface AxiosErrorResponse {
+  message?: string;
 }
 
 const RegisterPage: React.FC = () => {
@@ -81,7 +87,7 @@ const RegisterPage: React.FC = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validateForm()) return;
@@ -103,8 +109,11 @@ const RegisterPage: React.FC = () => {
         draggable: true,
       });
       router.push('/Dashboard');
-    } catch (error: any) {
-      const message = error.response?.data?.message || 'Registration failed. Please try again.';
+    } catch (error: unknown) {
+      let message = 'Registration failed. Please try again.';
+      if (error instanceof AxiosError) {
+        message = error.response?.data?.message || message;
+      }
       setErrors({ email: message });
       toast.error(message, {
         position: "top-right",
@@ -221,7 +230,6 @@ const RegisterPage: React.FC = () => {
           </div>
         </form>
       </div>
-      <ToastContainer />
     </div>
   );
 };

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
-  HiPlus, HiTrash, HiCheckCircle, HiOutlinePencil, 
+  HiPlus, HiTrash, HiCheckCircle, 
   HiUser, HiOutlineSearch, HiChat, HiUserAdd,
   HiOutlineDocumentText, HiOutlineChatAlt2
 } from 'react-icons/hi';
@@ -85,10 +85,8 @@ const TodoApp: React.FC = () => {
     msg.senderId === activeUser || msg.receiverId === activeUser
   );
 
-  // Get current user details
-
-  // Determine who the current user can message
-  const getMessageRecipients = () => {
+  // Memoize getMessageRecipients to avoid unnecessary re-renders
+  const getMessageRecipients = useCallback(() => {
     if (!currentUser) return [];
     
     switch(currentUser.role) {
@@ -109,7 +107,7 @@ const TodoApp: React.FC = () => {
       default:
         return [];
     }
-  };
+  }, [currentUser, users, activeUser]);
 
   // Task functions
   const addTask = () => {
@@ -177,7 +175,7 @@ const TodoApp: React.FC = () => {
     if (activeView === 'messages' && getMessageRecipients().length > 0) {
       setMessageRecipient(getMessageRecipients()[0].id);
     }
-  }, [activeView, activeUser]);
+  }, [activeView, activeUser, getMessageRecipients]);
 
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden flex h-screen">
@@ -185,7 +183,7 @@ const TodoApp: React.FC = () => {
       <div className="w-64 bg-gray-800 text-white flex flex-col">
         <div className="p-4 border-b border-gray-700">
           <h2 className="text-xl font-bold">Team Tasks</h2>
-          <p className="text-gray-400 text-sm">Manage your team's workflow</p>
+          <p className="text-gray-400 text-sm">Manage your team&apos;s workflow</p>
         </div>
         
         <div className="p-3">
@@ -197,7 +195,7 @@ const TodoApp: React.FC = () => {
               type="text"
               placeholder="Search tasks..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
               className="block w-full pl-10 pr-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             />
           </div>
@@ -250,7 +248,7 @@ const TodoApp: React.FC = () => {
               </div>
               {isAdmin && user.id !== 'abush' && (
                 <button 
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                     e.stopPropagation();
                     deleteUser(user.id);
                   }}
@@ -294,8 +292,8 @@ const TodoApp: React.FC = () => {
             <div>
               <h1 className="text-xl font-bold text-gray-800">
                 {activeView === 'tasks' 
-                  ? `${currentUser?.name}'s Tasks` 
-                  : `${currentUser?.name}'s Messages`}
+                  ? `${currentUser?.name}&apos;s Tasks` 
+                  : `${currentUser?.name}&apos;s Messages`}
               </h1>
               <p className="text-sm text-gray-600">
                 {activeView === 'tasks'
@@ -357,7 +355,7 @@ const TodoApp: React.FC = () => {
                 <input
                   type="text"
                   value={newUser.id}
-                  onChange={(e) => setNewUser({...newUser, id: e.target.value})}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewUser({...newUser, id: e.target.value})}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   placeholder="Enter unique ID"
                 />
@@ -370,7 +368,7 @@ const TodoApp: React.FC = () => {
                 <input
                   type="text"
                   value={newUser.name}
-                  onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewUser({...newUser, name: e.target.value})}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   placeholder="Enter full name"
                 />
@@ -382,7 +380,7 @@ const TodoApp: React.FC = () => {
                 </label>
                 <select
                   value={newUser.role}
-                  onChange={(e) => setNewUser({...newUser, role: e.target.value as User['role']})}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setNewUser({...newUser, role: e.target.value as User['role']})}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="video editor">Video Editor</option>
@@ -441,15 +439,15 @@ const TasksView: React.FC<{
               <input
                 type="text"
                 value={newTaskText}
-                onChange={(e) => setNewTaskText(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTaskText(e.target.value)}
                 placeholder="Enter task description..."
                 className="flex-1 border text-black border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                onKeyPress={(e) => e.key === 'Enter' && addTask()}
+                onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && addTask()}
               />
               
               <select
                 value={assignedTo}
-                onChange={(e) => setAssignedTo(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setAssignedTo(e.target.value)}
                 className="border border-gray-300 text-[#333] rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               >
                 {users
@@ -517,7 +515,7 @@ const TasksView: React.FC<{
                     <div className="mr-3 mt-1">
                       <select
                         value={task.status}
-                        onChange={(e) => updateTaskStatus(task.id, e.target.value as Task['status'])}
+                        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => updateTaskStatus(task.id, e.target.value as Task['status'])}
                         className={`text-xs font-medium rounded-full px-3 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500 ${
                           task.status === 'completed' 
                             ? 'bg-green-100 text-green-800' 
@@ -618,7 +616,7 @@ const MessagesView: React.FC<{
               </h2>
               <select
                 value={messageRecipient}
-                onChange={(e) => setMessageRecipient(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setMessageRecipient(e.target.value)}
                 className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 {getMessageRecipients().map(user => (
@@ -700,10 +698,10 @@ const MessagesView: React.FC<{
             <input
               type="text"
               value={newMessageText}
-              onChange={(e) => setNewMessageText(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewMessageText(e.target.value)}
               placeholder={`Message ${recipient?.name || '...'}`}
               className="flex-1 border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:ring-1 focus:ring-blue-500"
-              onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+              onKeyPress={(e: React.KeyboardEvent<HTMLInputElement>) => e.key === 'Enter' && sendMessage()}
             />
             <button
               onClick={sendMessage}

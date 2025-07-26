@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import axiosInstance from '@/helper/axiosInstance'; // Import custom Axios instance
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AxiosError, isAxiosError } from 'axios'; // Import AxiosError and isAxiosError
 
 // TypeScript interface for form data
 interface LoginFormData {
@@ -24,6 +25,11 @@ interface FormErrors {
   password?: string;
   currentPassword?: string;
   newPassword?: string;
+}
+
+// Interface for Axios error response
+interface AxiosErrorResponse {
+  message?: string;
 }
 
 const LoginPage: React.FC = () => {
@@ -128,7 +134,7 @@ const LoginPage: React.FC = () => {
   };
 
   // Handle login form submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validateLoginForm()) return;
@@ -147,24 +153,37 @@ const LoginPage: React.FC = () => {
         draggable: true,
       });
       router.push('/Dashboard');
-    } catch (error: any) {
-      const message = error.response?.data?.message || 'Invalid credentials. Please try again.';
-      setErrors({ password: message });
-      toast.error(message, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
+    } catch (error: unknown) {
+      if (isAxiosError<AxiosErrorResponse>(error)) {
+        const message = error.response?.data?.message || 'Invalid credentials. Please try again.';
+        setErrors({ password: message });
+        toast.error(message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } else {
+        const message = 'An unexpected error occurred. Please try again.';
+        setErrors({ password: message });
+        toast.error(message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
   // Handle password change submission
-  const handlePasswordChange = async (e: React.FormEvent) => {
+  const handlePasswordChange = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!validatePasswordChangeForm()) return;
@@ -172,8 +191,8 @@ const LoginPage: React.FC = () => {
     setIsPasswordChanging(true);
 
     try {
-      const response = await axiosInstance.post('/users/change-password', passwordChangeData);
-      toast.success('Password changed successfully!', {
+      await axiosInstance.post('/users/change-password', passwordChangeData);
+      toast.success('Password updated successfully!', {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -183,20 +202,33 @@ const LoginPage: React.FC = () => {
       });
       setChangePassword(false);
       setPasswordChangeData({ currentPassword: '', newPassword: '' });
-    } catch (error: any) {
-      const message = error.response?.data?.message || 'Failed to change password. Please try again.';
-      setErrors({ newPassword: message });
-      toast.error(message, {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-      if (error.response?.status === 401) {
-        localStorage.removeItem('token');
-        router.push('/login');
+    } catch (error: unknown) {
+      if (isAxiosError<AxiosErrorResponse>(error)) {
+        const message = error.response?.data?.message || 'Failed to update password.';
+        setErrors({ newPassword: message });
+        toast.error(message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+        if (error.response?.status === 401) {
+          localStorage.removeItem('token');
+          router.push('/login');
+        }
+      } else {
+        const message = 'An unexpected error occurred. Please try again.';
+        setErrors({ newPassword: message });
+        toast.error(message, {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
       }
     } finally {
       setIsPasswordChanging(false);

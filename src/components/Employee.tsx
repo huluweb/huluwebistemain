@@ -11,6 +11,7 @@ import axiosInstance from '@/helper/axiosInstance';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useRouter } from 'next/navigation';
+import { isAxiosError } from 'axios';
 
 // TypeScript interface for applicant data
 interface Applicant {
@@ -63,16 +64,23 @@ const Applicants: React.FC = () => {
       try {
         const response = await axiosInstance.get('/applicants');
         setApplicants(response.data);
-      } catch (error: any) {
-        const message = error.response?.data?.message || 'Failed to fetch applicants';
+      } catch (error) {
+        let message = 'Failed to fetch applicants';
+        
+        if (isAxiosError(error)) {
+          message = error.response?.data?.message || message;
+          if (error.response?.status === 401) {
+            localStorage.removeItem('token');
+            router.push('/login');
+          }
+        } else if (error instanceof Error) {
+          message = error.message;
+        }
+        
         toast.error(message, {
           position: 'top-right',
           autoClose: 3000,
         });
-        if (error.response?.status === 401) {
-          localStorage.removeItem('token');
-          router.push('/login');
-        }
       }
     };
     fetchApplicants();
@@ -144,7 +152,7 @@ const Applicants: React.FC = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!validateForm()) return;
 
@@ -167,16 +175,23 @@ const Applicants: React.FC = () => {
         position: 'top-right',
         autoClose: 3000,
       });
-    } catch (error: any) {
-      const message = error.response?.data?.message || 'Failed to add applicant';
+    } catch (error) {
+      let message = 'Failed to add applicant';
+      
+      if (isAxiosError(error)) {
+        message = error.response?.data?.message || message;
+        if (error.response?.status === 401) {
+          localStorage.removeItem('token');
+          router.push('/login');
+        }
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+      
       toast.error(message, {
         position: 'top-right',
         autoClose: 3000,
       });
-      if (error.response?.status === 401) {
-        localStorage.removeItem('token');
-        router.push('/login');
-      }
     } finally {
       setIsSubmitting(false);
     }
@@ -194,16 +209,23 @@ const Applicants: React.FC = () => {
         position: 'top-right',
         autoClose: 3000,
       });
-    } catch (error: any) {
-      const message = error.response?.data?.message || 'Failed to update status';
+    } catch (error) {
+      let message = 'Failed to update status';
+      
+      if (isAxiosError(error)) {
+        message = error.response?.data?.message || message;
+        if (error.response?.status === 401) {
+          localStorage.removeItem('token');
+          router.push('/login');
+        }
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+      
       toast.error(message, {
         position: 'top-right',
         autoClose: 3000,
       });
-      if (error.response?.status === 401) {
-        localStorage.removeItem('token');
-        router.push('/login');
-      }
     } finally {
       setUpdatingId(null);
     }

@@ -12,7 +12,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ setSee, onEmployeeAdded }) 
     department: '',
     status: 'Active',
     companyName: '',
-    experience: '',
+    experiance: '',
     quantity: '',
     phone: '',
     address: ''
@@ -86,11 +86,11 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ setSee, onEmployeeAdded }) 
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">Experience</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1.5">experiance</label>
           <input
             type="text"
-            name="experience"
-            value={formData.experience}
+            name="experiance"
+            value={formData.experiance}
             onChange={handleChange}
             className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
             required

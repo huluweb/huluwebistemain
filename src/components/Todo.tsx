@@ -4,6 +4,7 @@ import { HiPlus, HiTrash, HiCheckCircle, HiUser, HiOutlineSearch } from 'react-i
 import axiosInstance from '@/helper/axiosInstance';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { AxiosError } from 'axios'; // Added AxiosError import
 
 interface Task {
   _id: string;
@@ -59,8 +60,15 @@ const TodoApp: React.FC = () => {
     try {
       const response = await axiosInstance.get('http://localhost:5000/api/tasks');
       setTasks(response.data);
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to fetch tasks', {
+    } catch (error) {
+      let errorMessage = 'Failed to fetch tasks';
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -107,8 +115,15 @@ const TodoApp: React.FC = () => {
         pauseOnHover: true,
         draggable: true,
       });
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to add task', {
+    } catch (error) {
+      let errorMessage = 'Failed to add task';
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -134,8 +149,15 @@ const TodoApp: React.FC = () => {
         pauseOnHover: true,
         draggable: true,
       });
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to delete task', {
+    } catch (error) {
+      let errorMessage = 'Failed to delete task';
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -165,8 +187,15 @@ const TodoApp: React.FC = () => {
         pauseOnHover: true,
         draggable: true,
       });
-    } catch (error: any) {
-      toast.error(error.response?.data?.message || 'Failed to update task', {
+    } catch (error) {
+      let errorMessage = 'Failed to update task';
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || errorMessage;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      toast.error(errorMessage, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -198,7 +227,7 @@ const TodoApp: React.FC = () => {
         <div className="w-full bg-gray-800 text-white flex items-center">
           <div className="p-4 border-b border-gray-700">
             <h2 className="text-xl font-bold">Team Tasks</h2>
-            <p className="text-gray-400 text-sm">Manage your team's tasks</p>
+            <p className="text-gray-400 text-sm">Manage your team&apos;s tasks</p> {/* Fixed apostrophe */}
           </div>
 
           <div className="p-3 flex items-center">
@@ -246,7 +275,7 @@ const TodoApp: React.FC = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-xl font-bold text-gray-800">
-                  {currentUser?.name}'s Tasks
+                  {currentUser?.name}&apos;s Tasks {/* Fixed apostrophe */}
                 </h1>
                 <p className="text-sm text-gray-600">
                   {isAdmin 

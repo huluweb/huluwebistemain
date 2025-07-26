@@ -2,8 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { HiPlus, HiOutlineSearch, HiDotsVertical } from 'react-icons/hi';
 import EmployeeForm from "./EmlployeeForm";
 
+// Define the Employee interface
+interface Employee {
+  _id: string;
+  name: string;
+  position: string;
+  phone?: string;
+  address?: string;
+  companyName?: string;
+}
+
 const Employeer: React.FC = () => {
-  const [employees, setEmployees] = useState([]);
+  // Add type to employees state
+  const [employees, setEmployees] = useState<Employee[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [see, setSee] = useState(false);
 
@@ -26,9 +37,10 @@ const Employeer: React.FC = () => {
     }
   };
 
+  // Add safe navigation with optional chaining
   const filteredEmployees = employees.filter(employee => 
-    employee.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.position.toLowerCase().includes(searchTerm.toLowerCase())
+    (employee.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (employee.position || '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (

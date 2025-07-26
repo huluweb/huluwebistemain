@@ -11,9 +11,31 @@ import {
   HiOutlineChevronDown
 } from 'react-icons/hi';
 
+// Define the Notification interface
+interface Notification {
+  id: string;
+  title: string;
+  content: string;
+  read: boolean;
+  time: string;
+  type: string;
+  eventTime?: string | null;
+}
+
+// Define the API response notification interface (matching backend structure)
+interface ApiNotification {
+  _id: string;
+  title: string;
+  discription: string; // Note: Backend uses 'discription'
+  mark: boolean;
+  time: string;
+  type?: string;
+  eventTime?: string | null;
+}
+
 const NotificationsPage = () => {
-  const [filter, setFilter] = useState('all');
-  const [notifications, setNotifications] = useState([]); // Initialize notifications state
+  const [filter, setFilter] = useState<string>('all');
+  const [notifications, setNotifications] = useState<Notification[]>([]); // Type the notifications state
 
   useEffect(() => {
     fetchUpcoming();
@@ -29,9 +51,9 @@ const NotificationsPage = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json();
+      const data: ApiNotification[] = await response.json(); // Type the API response
       // Map backend data to frontend structure
-      const mappedNotifications = data.map(notification => ({
+      const mappedNotifications: Notification[] = data.map((notification: ApiNotification) => ({
         id: notification._id,
         title: notification.title,
         content: notification.discription, // Map 'discription' to 'content'
@@ -48,7 +70,7 @@ const NotificationsPage = () => {
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
-  const markAsRead = async (id) => {
+  const markAsRead = async (id: string) => {
     try {
       // Update backend
       await fetch(`http://localhost:5000/api/notifications/${id}`, {
@@ -85,7 +107,7 @@ const NotificationsPage = () => {
     }
   };
 
-  const deleteNotification = async (id) => {
+  const deleteNotification = async (id: string) => {
     try {
       // Delete from backend
       await fetch(`http://localhost:5000/api/notifications/${id}`, {
@@ -121,7 +143,7 @@ const NotificationsPage = () => {
     ? notifications 
     : notifications.filter(n => n.type === filter);
 
-  const getIcon = (type) => {
+  const getIcon = (type: string) => {
     switch (type) {
       case "event":
         return <HiOutlineCalendar className="w-5 h-5 text-purple-500" />;
@@ -142,7 +164,7 @@ const NotificationsPage = () => {
     }
   };
 
-  const getTypeLabel = (type) => {
+  const getTypeLabel = (type: string) => {
     switch (type) {
       case "event": return "Event";
       case "document": return "Document";
