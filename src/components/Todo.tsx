@@ -58,7 +58,7 @@ const TodoApp: React.FC = () => {
   const fetchTasks = async () => {
     setIsLoading(true);
     try {
-      const response = await axiosInstance.get('http://localhost:5000/api/tasks');
+      const response = await axiosInstance.get('https://huluweb.onrender.com/api/tasks');
       setTasks(response.data);
     } catch (error) {
       let errorMessage = 'Failed to fetch tasks';
@@ -104,7 +104,7 @@ const TodoApp: React.FC = () => {
         date: new Date().toISOString().split('T')[0],
       };
 
-      const response = await axiosInstance.post('http://localhost:5000/api/tasks', newTask);
+      const response = await axiosInstance.post('https://huluweb.onrender.com/api/tasks', newTask);
       setTasks([...tasks, response.data.task]);
       setNewTaskText('');
       toast.success('Task added successfully', {
@@ -139,7 +139,7 @@ const TodoApp: React.FC = () => {
   const deleteTask = async (id: string) => {
     setIsLoading(true);
     try {
-      await axiosInstance.delete(`http://localhost:5000/api/tasks/${id}`);
+      await axiosInstance.delete(`https://huluweb.onrender.com/api/tasks/${id}`);
       setTasks(tasks.filter(task => task._id !== id));
       toast.success('Task deleted successfully', {
         position: "top-right",
@@ -177,7 +177,7 @@ const TodoApp: React.FC = () => {
     setIsLoading(true);
     try {
       const updatedTask = { ...taskToUpdate, completed: !taskToUpdate.completed };
-      const response = await axiosInstance.put(`http://localhost:5000/api/tasks/${id}`, updatedTask);
+      const response = await axiosInstance.put(`https://huluweb.onrender.com/api/tasks/${id}`, updatedTask);
       setTasks(tasks.map(task => task._id === id ? response.data.task : task));
       toast.success('Task status updated', {
         position: "top-right",

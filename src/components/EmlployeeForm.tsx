@@ -21,7 +21,7 @@ const EmployeeForm: React.FC<EmployeeFormProps> = ({ setSee, onEmployeeAdded }) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/api/employees', {
+      const response = await fetch('https://huluweb.onrender.com/api/employees', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

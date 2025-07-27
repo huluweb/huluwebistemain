@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 
 // Create Axios instance
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://huluweb.onrender.com/api',
   headers: {
     'Content-Type': 'application/json',
   },

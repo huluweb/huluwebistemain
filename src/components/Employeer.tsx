@@ -25,7 +25,7 @@ const Employeer: React.FC = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/employees', {
+      const response = await fetch('https://huluweb.onrender.com/api/employees', {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }

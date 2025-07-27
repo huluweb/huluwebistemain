@@ -67,7 +67,7 @@ const Dashboard: React.FC = () => {
 
   const fetchDashboard = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/dashboard-stats", {
+      const response = await fetch("https://huluweb.onrender.com/api/dashboard-stats", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -95,7 +95,7 @@ const Dashboard: React.FC = () => {
 
   const fetchUpcoming = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/notifications", {
+      const response = await fetch("https://huluweb.onrender.com/api/notifications", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

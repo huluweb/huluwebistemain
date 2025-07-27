@@ -43,7 +43,7 @@ const NotificationsPage = () => {
 
   const fetchUpcoming = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/notifications', {
+      const response = await fetch('https://huluweb.onrender.com/api/notifications', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -73,7 +73,7 @@ const NotificationsPage = () => {
   const markAsRead = async (id: string) => {
     try {
       // Update backend
-      await fetch(`http://localhost:5000/api/notifications/${id}`, {
+      await fetch(`https://huluweb.onrender.com/api/notifications/${id}`, {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -93,7 +93,7 @@ const NotificationsPage = () => {
   const markAllAsRead = async () => {
     try {
       // Update backend
-      await fetch('http://localhost:5000/api/notifications/mark-all', {
+      await fetch('https://huluweb.onrender.com/api/notifications/mark-all', {
         method: 'PATCH',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -110,7 +110,7 @@ const NotificationsPage = () => {
   const deleteNotification = async (id: string) => {
     try {
       // Delete from backend
-      await fetch(`http://localhost:5000/api/notifications/${id}`, {
+      await fetch(`https://huluweb.onrender.com/api/notifications/${id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -126,7 +126,7 @@ const NotificationsPage = () => {
   const clearAll = async () => {
     try {
       // Clear all notifications in backend
-      await fetch('http://localhost:5000/api/notifications', {
+      await fetch('https://huluweb.onrender.com/api/notifications', {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,

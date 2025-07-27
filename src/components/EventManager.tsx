@@ -19,7 +19,7 @@ const EventManager: React.FC = () => {
 
   const fetchUpcoming = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/FormEvent', {
+      const response = await fetch('https://huluweb.onrender.com/api/FormEvent', {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },

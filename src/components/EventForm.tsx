@@ -20,7 +20,7 @@ const EventForm: React.FC<EventFormProps> = ({ onSubmit }) => {
       const currentYear = new Date().getFullYear();
       const date = `${currentYear}-${formData.month}-${formData.day}`;
       
-      const response = await fetch('http://localhost:5000/api/FormEvent', {
+      const response = await fetch('https://huluweb.onrender.com/api/FormEvent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
